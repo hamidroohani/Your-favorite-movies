@@ -21,8 +21,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/my-favorite-movies', [\App\Http\Controllers\MoviesController::class,
         'my_favorite_movies'])->name('my-favorite-movies');
-    Route::post('/sync_movies', [\App\Http\Controllers\MoviesController::class,
-        'sync_movies'])->name('sync_movies');
+    Route::post('/sync_movies', [\App\Http\Controllers\MoviesController::class, 'sync_movies'])->name('sync_movies');
+    Route::post('/search_movies', [\App\Http\Controllers\MoviesController::class, 'search_movies'])->name('search_movies');
 });
 Auth::routes();
 

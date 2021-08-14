@@ -63,4 +63,11 @@ class MoviesController extends Controller
         }
         return $request->input('ids');
     }
+
+    public function search_movies(Request $request)
+    {
+        $query = $request->input('query');
+        $query = str_replace(" ","+",$query);
+        return file_get_contents("https://api.themoviedb.org/3/search/movie?api_key=4c4ff693ec98c7088fe547d782e01836&query=".$query);
+    }
 }

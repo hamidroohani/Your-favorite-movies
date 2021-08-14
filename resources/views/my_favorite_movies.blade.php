@@ -57,15 +57,18 @@
             let body = $("body");
 
             body.on("keyup paste", "#query", (e) => {
+                let oldQuery = $(e.target).val();
+                setTimeout(()=>{
                 let thisQuery = $(e.target).val();
-                if (thisQuery.length > 2) {
+                if (thisQuery.length > 2 && thisQuery === oldQuery) {
                     $.ajax({
-                        url: 'https://api.themoviedb.org/3/search/movie',
+                        url: '{{ route('search_movies') }}',
                         data: {
                             query: thisQuery,
-                            api_key: "4c4ff693ec98c7088fe547d782e01836"
+                            _token: '{{ csrf_token() }}'
                         },
-                        method: 'GET',
+                        method: 'POST',
+                        dataType: 'json',
                         success: (response) => {
                             if (response.results.length) {
                                 let movies = response.results.slice(0, 10);
@@ -78,6 +81,7 @@
                         }
                     });
                 }
+                },1000);
             });
             body.on("click", "#results .list-group-item", (e) => {
                 let myThis = $(e.target).closest('.list-group-item');
