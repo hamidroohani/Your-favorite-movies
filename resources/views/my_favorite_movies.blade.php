@@ -41,7 +41,9 @@
                     <div class="card-header">My Favorites</div>
                     <div class="card-body">
                         <ul class="list-group" id="my_favorites">
-
+                            @foreach($movies as $movie)
+                                <li class='list-group-item' data-id='{{ $movie['id'] }}'>{{ $movie['original_title'] }}<span class='delete'>X</span></li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>

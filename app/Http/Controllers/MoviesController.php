@@ -13,7 +13,17 @@ class MoviesController extends Controller
     {
         $user = User::with('Metas')->find(auth()->id());
         $metas = $user->Metas;
-        return view("my_favorite_movies", compact('metas'));
+        if (count($metas)){
+            $metas = $metas->where('key','favorite_movies')->first();
+            $metas = unserialize($metas->value);
+        }
+        $movies = [];
+        foreach ($metas as $meta)
+        {
+            $movie = file_get_contents("https://api.themoviedb.org/3/movie/" . $meta . "?api_key=4c4ff693ec98c7088fe547d782e01836&language=en-US");
+            $movies[] = json_decode($movie,true);
+        }
+        return view("my_favorite_movies", compact('movies'));
     }
 
     public function sync_movies(Request $request)
