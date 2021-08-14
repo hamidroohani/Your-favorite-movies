@@ -17,9 +17,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/my-favorite-movies',[\App\Http\Controllers\MoviesController::class,'my_favorite_movies'])->name('my-favorite-movies');
-Route::post('/sync_movies',[\App\Http\Controllers\MoviesController::class,'sync_movies'])->name('sync_movies');
+Route::group(['middleware' => ['auth']], function () {
 
+    Route::get('/my-favorite-movies', [\App\Http\Controllers\MoviesController::class,
+        'my_favorite_movies'])->name('my-favorite-movies');
+    Route::post('/sync_movies', [\App\Http\Controllers\MoviesController::class,
+        'sync_movies'])->name('sync_movies');
+});
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class,
+    'index'])->name('home');

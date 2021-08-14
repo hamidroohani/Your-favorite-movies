@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserMeta;
 use Illuminate\Http\Request;
 
 class MoviesController extends Controller
