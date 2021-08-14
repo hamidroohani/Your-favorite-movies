@@ -23,11 +23,11 @@ class MoviesController extends Controller
         $user_id = auth()->id();
 
         $web_favorites = $request->input('ids');
-        $db_favorites = Favorite::where("user_id", $user_id)->get()->toArray();
+        $db_favorites = Favorite::where("user_id", $user_id)->pluck('movie_id','id')->toArray();
 
-        foreach ($db_favorites as $db_favorite) {
-            if (!in_array($db_favorite->movie_id, $web_favorites)) {
-                $db_favorite->delete();
+        foreach ($db_favorites as $key=>$db_favorite) {
+            if (!in_array($db_favorite, $web_favorites)) {
+                Favorite::where('id',$key)->delete();
             }
         }
 
