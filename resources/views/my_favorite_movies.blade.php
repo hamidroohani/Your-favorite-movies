@@ -74,7 +74,8 @@
                                 let movies = response.results.slice(0, 10);
                                 let html = ``;
                                 movies.map(movie => {
-                                    html += `<li class="list-group-item" data-id="${movie.id}"><div class="d-flex align-items-center"><img class="heigth-100" src="https://image.tmdb.org/t/p/w200${movie.poster_path}"><h2>${movie.original_title}</h2><p>${movie.overview}</p></div><li>`;
+                                    let imgSrc = movie.poster_path ? "https://image.tmdb.org/t/p/w200" + movie.poster_path : "/images/noPicture.svg";
+                                    html += `<li class="list-group-item" data-id="${movie.id}"><div class="d-flex align-items-center"><img class="heigth-100" src="${imgSrc}"><h2>${movie.original_title}</h2><p>${movie.overview}</p></div><li>`;
                                 });
                                 $("#results").html(html);
                             }
