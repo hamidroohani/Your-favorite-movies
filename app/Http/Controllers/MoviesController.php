@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Favorite;
+use App\Models\Movie;
 use App\Models\User;
 use App\Models\UserMeta;
 use Illuminate\Http\Request;
@@ -21,7 +22,13 @@ class MoviesController extends Controller
         foreach ($metas as $meta)
         {
             $movie = file_get_contents("https://api.themoviedb.org/3/movie/" . $meta . "?api_key=4c4ff693ec98c7088fe547d782e01836&language=en-US");
-            $movies[] = json_decode($movie,true);
+            $movie = json_decode($movie,true);
+            $movies[] = $movie;
+            $movie['m_id'] = $movie['id'];
+            $movie = array_map(function ($m){
+                return (is_array($m)) ? serialize($m) : $m;
+            },$movie);
+            Movie::create($movie);
         }
         return view("my_favorite_movies", compact('movies'));
     }
