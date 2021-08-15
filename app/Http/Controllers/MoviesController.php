@@ -24,10 +24,11 @@ class MoviesController extends Controller
                 $movie = $movie->toArray();
                 $movies[] = $movie;
             } else {
-                $movie = file_get_contents("https://api.themoviedb.org/3/movie/" . $meta . "?api_key=4c4ff693ec98c7088fe547d782e01836&language=en-US");
+                $movie = @file_get_contents("https://api.themoviedb.org/3/movie/" . $meta . "?api_key=4c4ff693ec98c7088fe547d782e01836&language=en-US");
                 $movie = json_decode($movie, true);
-                $movies[] = $movie;
+                if (!$movie) continue;
                 $movie['m_id'] = $movie['id'];
+                $movies[] = $movie;
                 $movie = array_map(function ($m) {
                     return (is_array($m)) ? serialize($m) : $m;
                 }, $movie);
