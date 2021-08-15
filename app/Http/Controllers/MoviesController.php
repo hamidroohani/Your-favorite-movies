@@ -14,21 +14,25 @@ class MoviesController extends Controller
     {
         $user = User::with('Metas')->find(auth()->id());
         $metas = $user->Metas;
-        if (count($metas)){
-            $metas = $metas->where('key','favorite_movies')->first();
+        if (count($metas)) {
+            $metas = $metas->where('key', 'favorite_movies')->first();
             $metas = unserialize($metas->value);
         }
         $movies = [];
-        foreach ($metas as $meta)
-        {
-            $movie = file_get_contents("https://api.themoviedb.org/3/movie/" . $meta . "?api_key=4c4ff693ec98c7088fe547d782e01836&language=en-US");
-            $movie = json_decode($movie,true);
-            $movies[] = $movie;
-            $movie['m_id'] = $movie['id'];
-            $movie = array_map(function ($m){
-                return (is_array($m)) ? serialize($m) : $m;
-            },$movie);
-            Movie::create($movie);
+        foreach ($metas as $meta) {
+            if ($movie = Movie::where('m_id', $meta)->first()) {
+                $movie = $movie->toArray();
+                $movies[] = $movie;
+            } else {
+                $movie = file_get_contents("https://api.themoviedb.org/3/movie/" . $meta . "?api_key=4c4ff693ec98c7088fe547d782e01836&language=en-US");
+                $movie = json_decode($movie, true);
+                $movies[] = $movie;
+                $movie['m_id'] = $movie['id'];
+                $movie = array_map(function ($m) {
+                    return (is_array($m)) ? serialize($m) : $m;
+                }, $movie);
+                Movie::create($movie);
+            }
         }
         return view("my_favorite_movies", compact('movies'));
     }
@@ -40,11 +44,11 @@ class MoviesController extends Controller
         $user_id = auth()->id();
 
         $web_favorites = $request->input('ids');
-        $db_favorites = Favorite::where("user_id", $user_id)->pluck('movie_id','id')->toArray();
+        $db_favorites = Favorite::where("user_id", $user_id)->pluck('movie_id', 'id')->toArray();
 
-        foreach ($db_favorites as $key=>$db_favorite) {
+        foreach ($db_favorites as $key => $db_favorite) {
             if (!in_array($db_favorite, $web_favorites)) {
-                Favorite::where('id',$key)->delete();
+                Favorite::where('id', $key)->delete();
             }
         }
 
@@ -74,7 +78,7 @@ class MoviesController extends Controller
     public function search_movies(Request $request)
     {
         $query = $request->input('query');
-        $query = str_replace(" ","+",$query);
-        return file_get_contents("https://api.themoviedb.org/3/search/movie?api_key=4c4ff693ec98c7088fe547d782e01836&query=".$query);
+        $query = str_replace(" ", "+", $query);
+        return file_get_contents("https://api.themoviedb.org/3/search/movie?api_key=4c4ff693ec98c7088fe547d782e01836&query=" . $query);
     }
 }
